@@ -22,6 +22,14 @@
             android:launchMode="singleTask">
 
         </activity>
+        <activity android:name=".Activity.SystemVideoPlayerActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/myScreen"
+
+            />
+
+
+
     </application>
 
 </manifest>

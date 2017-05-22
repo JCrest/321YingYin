@@ -1,8 +1,10 @@
 package com.example.jiangchuanfa.a321yingyin.fragment;
 
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -11,8 +13,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.jiangchuanfa.a321yingyin.Activity.SystemVideoPlayerActivity;
 import com.example.jiangchuanfa.a321yingyin.R;
 import com.example.jiangchuanfa.a321yingyin.adapter.LocalVideoAdapter;
 import com.example.jiangchuanfa.a321yingyin.base.BaseFragment;
@@ -44,7 +46,7 @@ public class LocalVideoFragment extends BaseFragment {
                 //有数据
                 //文本隐藏
                 tv_no_media.setVisibility(View.GONE);
-                adapter = new LocalVideoAdapter(mContext, mediaItems);
+                adapter = new LocalVideoAdapter(context, mediaItems);
                 //设置适配器
                 listview.setAdapter(adapter);
 
@@ -59,14 +61,21 @@ public class LocalVideoFragment extends BaseFragment {
     @Override
     public View initView() {
         Log.e("TAG", "本地视频ui初始化了。。");
-        View view = View.inflate(mContext, R.layout.fragment_local_video, null);
+        View view = View.inflate(context, R.layout.fragment_local_video, null);
         listview = (ListView) view.findViewById(R.id.listview);
         tv_no_media = (TextView) view.findViewById(R.id.tv_no_media);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MediaItem mediaItem = adapter.getItem(position);
-                Toast.makeText(mContext, "mediaItem==" + mediaItem.toString(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "mediaItem==" + mediaItem.toString(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, SystemVideoPlayerActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("videolist",mediaItems);
+                intent.putExtra("position",position);
+                intent.putExtras(bundle);
+                startActivity(intent);
+
             }
         });
 
@@ -89,7 +98,7 @@ public class LocalVideoFragment extends BaseFragment {
 
                 //初始化集合
                 mediaItems = new ArrayList<MediaItem>();
-                ContentResolver resolver = mContext.getContentResolver();
+                ContentResolver resolver = context.getContentResolver();
                 //sdcard 的视频路径
                 Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
                 String[] objs = {

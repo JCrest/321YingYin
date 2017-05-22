@@ -1,10 +1,12 @@
 package com.example.jiangchuanfa.a321yingyin.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by crest on 2017/5/19.
  */
 
-public class MediaItem {
+public class MediaItem implements Serializable{
 
     String name ;
     long duration ;

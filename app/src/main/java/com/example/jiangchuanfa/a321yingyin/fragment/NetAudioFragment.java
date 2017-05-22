@@ -17,7 +17,7 @@ public class NetAudioFragment extends BaseFragment {
     @Override
     public View initView() {
         Log.e("TAG","本地音频ui初始化了。。");
-        textView = new TextView(mContext);
+        textView = new TextView(context);
         textView.setTextColor(Color.RED);
         textView.setGravity(Gravity.CENTER);
         textView.setTextSize(25);

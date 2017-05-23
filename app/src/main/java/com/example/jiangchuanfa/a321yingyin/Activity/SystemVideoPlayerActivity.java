@@ -342,45 +342,74 @@ public class SystemVideoPlayerActivity extends AppCompatActivity implements View
 
     }
 
+/*
+     private float startY;
+     private int touchRang = 0;
+     private int mVol;
 
-    private float startY;
+     //手势识别器一般往往是和触摸事件成对出现的（把事件交给手势识别器去解析）
+     @Override
+     public boolean onTouchEvent(MotionEvent event) {
+         super.onTouchEvent(event);
+         detector.onTouchEvent(event);
 
-    private int touchRang = 0;
 
+         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+             //1.按下
+             //按下的时候记录起始坐标，最大的滑动区域（屏幕的高），当前的音量
+             startY = event.getY();
+             touchRang = Math.min(screenHeight, screenWidth);//screeHeight
+             mVol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+             //把消息移除
+             handler.removeMessages(HIDE_MEDIA_CONTROLLER);
+         }else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+             float endY = event.getY();
+             //屏幕滑动的距离
+             float distanceY = startY - endY;
+             //滑动屏幕的距离 ： 总距离  = 改变的声音 ： 总声音
+
+             //改变的声音 = （滑动屏幕的距离 / 总距离)*总声音
+             float delta = (distanceY/touchRang) * maxVoice;
+             // 设置的声音  = 原来记录的 + 改变的声音
+             int volue = (int) Math.min(Math.max(mVol + delta,0),maxVoice);
+             //判断
+             if(delta != 0){
+                 updateVoiceProgress(volue);
+             }
+ //            startY = event.getY();//不能添加
+         } else if (event.getAction() == MotionEvent.ACTION_UP) {
+             handler.sendEmptyMessageDelayed(HIDE_MEDIA_CONTROLLER,5000);
+         }
+         return true;
+     }*/
+    //第二种方法触屏控制音量的增减
+    private float dowY;
     private int mVol;
+    private float touchRang;
 
-    //手势识别器一般往往是和触摸事件成对出现的（把事件交给手势识别器去解析）
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
         detector.onTouchEvent(event);
-
-
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            //1.按下
-            //按下的时候记录起始坐标，最大的滑动区域（屏幕的高），当前的音量
-            startY = event.getY();
-            touchRang = Math.min(screenHeight, screenWidth);//screeHeight
-            mVol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-            //把消息移除
-            handler.removeMessages(HIDE_MEDIA_CONTROLLER);
-        }else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            float endY = event.getY();
-            //屏幕滑动的距离
-            float distanceY = startY - endY;
-            //滑动屏幕的距离 ： 总距离  = 改变的声音 ： 总声音
-
-            //改变的声音 = （滑动屏幕的距离 / 总距离)*总声音
-            float delta = (distanceY/touchRang) * maxVoice;
-            // 设置的声音  = 原来记录的 + 改变的声音
-            int volue = (int) Math.min(Math.max(mVol + delta,0),maxVoice);
-            //判断
-            if(delta != 0){
-                updateVoiceProgress(volue);
-            }
-//            startY = event.getY();//不能添加
-        } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            handler.sendEmptyMessageDelayed(HIDE_MEDIA_CONTROLLER,5000);
+        super.onTouchEvent(event);
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                dowY = event.getY();
+                mVol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+                touchRang = Math.min(screenWidth, screenHeight);
+                handler.removeMessages(HIDE_MEDIA_CONTROLLER);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float endY = event.getY();
+                float distanceY = dowY - endY;
+                float delta = (distanceY / touchRang) * maxVoice;
+                if (delta != 0) {
+                    int mVioce = (int) Math.min(Math.max((delta + mVol), 0), maxVoice);
+                    updateVoiceProgress(mVioce);
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                handler.sendEmptyMessageDelayed(HIDE_MEDIA_CONTROLLER, 5000);
+                break;
         }
         return true;
     }
